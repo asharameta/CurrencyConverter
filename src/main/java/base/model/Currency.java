@@ -1,12 +1,11 @@
 package base.model;
 
-public class Currencies {
-	private int id;
+public class Currency {
 	private String code;
 	private String name;
 	private char symbol;
 	
-	public Currencies(String code, String name, char symbol) {
+	public Currency(String code, String name, char symbol) {
 		this.code = code;
 		this.name = name;
 		this.symbol = symbol;
