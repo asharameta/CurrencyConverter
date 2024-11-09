@@ -11,6 +11,10 @@ public class Currency {
 		this.symbol = symbol;
 	}
 	
+	public Currency() {
+		
+	}
+	
 	public String getCode() {
         return code;
     }
