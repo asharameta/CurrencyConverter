@@ -13,7 +13,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import base.model.CurrencyDAO;
+import base.model.ExchangeRateDAO;
 import base.service.CurrencyService;
+import base.service.ExchangeRateService;
 
 @Configuration
 @ComponentScan("base")
@@ -53,7 +55,17 @@ public class SpringConfig implements WebMvcConfigurer {
 	}
 	
 	@Bean
+	public ExchangeRateDAO exchangeRateDAO(JdbcTemplate jdbcTemplate) {
+		return new ExchangeRateDAO(jdbcTemplate);
+	}
+	
+	@Bean
 	public CurrencyService currencyService(CurrencyDAO currencyDAO) {
 		return new CurrencyService(currencyDAO);
+	}
+	
+	@Bean
+	public ExchangeRateService exchangeRateService(ExchangeRateDAO exchangeRateDAO) {
+		return new ExchangeRateService(exchangeRateDAO);
 	}
 }
