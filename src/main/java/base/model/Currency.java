@@ -47,4 +47,14 @@ public class Currency {
     public void setSymbol(char symbol) {
         this.symbol = symbol;
     }
+    
+    @Override
+    public String toString() {
+    	return "Currency {" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", symbol='" + symbol + '\'' +
+                '}';
+    }
 }

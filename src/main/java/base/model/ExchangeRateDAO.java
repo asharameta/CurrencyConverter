@@ -58,7 +58,8 @@ public class ExchangeRateDAO {
 					+ " JOIN currencies bc ON er.basecurrency = bc.id "
 					+ "JOIN currencies tc ON er.targetcurrency = tc.id"
 					+ " WHERE er.id = ?";
-		
+
+    	
 		List<ExchangeRate> exchangeRates = jdbcTemplate.query(sql, (rs, rowNum) -> {		
 			ExchangeRate eR = new ExchangeRate();
 			eR.setId(rs.getInt("exchangeRateId"));
@@ -89,7 +90,7 @@ public class ExchangeRateDAO {
 	public int addExchangeRate(ExchangeRate exchangeRateToAdd) {
 		String sql = "INSERT INTO exchangerates (basecurrency, targetcurrency, rate) VALUES (?, ?, ?)";
 		
-	    int rowsAffected = jdbcTemplate.update(sql, exchangeRateToAdd.getBaseCurrency(), exchangeRateToAdd.getTargetCurrency(), exchangeRateToAdd.getRate());
+	    int rowsAffected = jdbcTemplate.update(sql, exchangeRateToAdd.getBaseCurrency().getId(), exchangeRateToAdd.getTargetCurrency().getId(), exchangeRateToAdd.getRate());
 		
 		return rowsAffected;
 	}
@@ -100,5 +101,40 @@ public class ExchangeRateDAO {
 		int rowsAffected = jdbcTemplate.update(sql, id);
 	
 		return rowsAffected;
+	}
+	
+	public Exchange getExchangeDetails(String from, String to) {
+		String sql = "SELECT er.rate, "
+				+ "bc.id AS baseCurrencyId, bc.code AS baseCurrencyCode, bc.name AS baseCurrencyName, bc.symbol AS baseCurrencySymbol,"
+				+ "tc.id AS targetCurrencyId, tc.code AS targetCurrencyCode, tc.name AS targetCurrencyName, tc.symbol AS targetCurrencySymbol"
+				+ " FROM exchangerates er"
+				+ " JOIN currencies bc ON er.basecurrency = bc.id "
+				+ "JOIN currencies tc ON er.targetcurrency = tc.id"
+				+ " WHERE bc.code = ? AND tc.code = ?";
+	
+		
+		List<Exchange> exchange = jdbcTemplate.query(sql, (rs, rowNum) -> {		
+			Exchange e = new Exchange();
+			e.setRate(rs.getDouble("rate"));
+            
+			Currency bc = new Currency();
+			bc.setId(rs.getInt("baseCurrencyId"));
+			bc.setCode(rs.getString("baseCurrencyCode"));
+			bc.setName(rs.getString("baseCurrencyName"));
+			bc.setSymbol(rs.getString("baseCurrencySymbol").charAt(0));
+			
+			
+			Currency tc = new Currency();
+			tc.setId(rs.getInt("targetCurrencyId"));
+			tc.setCode(rs.getString("targetCurrencyCode"));
+			tc.setName(rs.getString("targetCurrencyName"));
+			tc.setSymbol(rs.getString("targetCurrencySymbol").charAt(0));
+			
+			e.setBaseCurrency(bc);
+			e.setTargetCurrency(tc);
+			
+			return e;
+		}, from, to);
+		return exchange.get(0);
 	}
 }
